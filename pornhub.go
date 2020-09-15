@@ -16,14 +16,31 @@ const apiURL = "http://www.pornhub.com/webmasters/"
 // APITimeout in seconds
 const APITimeout = 5
 
-// SearchVideos function
-func SearchVideos(search string, page int) SearchResult {
+// SearchVideosByTerm function
+func SearchVideosByTerm(search string, page int) SearchResult {
 	timeout := time.Duration(APITimeout * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
 	// http://www.pornhub.com/webmasters/search?search=Hooker&page=1
-	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?search=%s&%d", url.QueryEscape(search), page))
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?search=%s&page=%d", url.QueryEscape(search), page))
+	b, _ := ioutil.ReadAll(resp.Body)
+	var result SearchResult
+	err := json.Unmarshal(b, &result)
+	if err != nil {
+		log.Println(err)
+	}
+	return result
+}
+
+// SearchVideosByCategory function
+func SearchVideosByCategory(search string, page int) SearchResult {
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	// https://www.pornhub.com/webmasters/search?category=2d&page=1
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?category=%s&page=%d", url.QueryEscape(search), page))
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result SearchResult
 	err := json.Unmarshal(b, &result)
