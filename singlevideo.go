@@ -1,5 +1,6 @@
 package pornhub
 
-type PornhubSingleVideo struct {
-	Video PornhubVideo `json:"video,omitempty"`
+// SingleVideo structure
+type SingleVideo struct {
+	Video Video `json:"video,omitempty"`
 }

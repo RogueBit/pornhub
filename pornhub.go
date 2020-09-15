@@ -10,17 +10,22 @@ import (
 	"time"
 )
 
+// apiURL base for API
 const apiURL = "http://www.pornhub.com/webmasters/"
+
+// APITimeout in seconds
 const APITimeout = 5
 
-func SearchVideos(search string) PornhubSearchResult {
+// SearchVideos function
+func SearchVideos(search string, page int) SearchResult {
 	timeout := time.Duration(APITimeout * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
-	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?search=%s&thumbnail=all", url.QueryEscape(search)))
+	// http://www.pornhub.com/webmasters/search?search=Hooker&page=1
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?search=%s&%d", url.QueryEscape(search), page))
 	b, _ := ioutil.ReadAll(resp.Body)
-	var result PornhubSearchResult
+	var result SearchResult
 	err := json.Unmarshal(b, &result)
 	if err != nil {
 		log.Println(err)
@@ -28,14 +33,47 @@ func SearchVideos(search string) PornhubSearchResult {
 	return result
 }
 
-func GetVideoByID(ID string) PornhubSingleVideo {
+// ListCategories function
+func ListCategories() CategoriesList {
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, _ := client.Get(fmt.Sprintf(apiURL + "categories"))
+	b, _ := ioutil.ReadAll(resp.Body)
+	var result CategoriesList
+	err := json.Unmarshal(b, &result)
+	if err != nil {
+		log.Println(err)
+	}
+	return result
+}
+
+// NewestVideos function
+func NewestVideos(page int) SearchResult {
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, _ := client.Get(fmt.Sprintf(apiURL+"search?ordering=newest&period=daily&page=%d", page))
+	b, _ := ioutil.ReadAll(resp.Body)
+	var result SearchResult
+	err := json.Unmarshal(b, &result)
+	if err != nil {
+		log.Println(err)
+	}
+	return result
+}
+
+// GetVideoByID function
+func GetVideoByID(ID string) SingleVideo {
 	timeout := time.Duration(APITimeout * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
 	resp, _ := client.Get(fmt.Sprintf(apiURL+"video_by_id?id=%s", ID))
 	b, _ := ioutil.ReadAll(resp.Body)
-	var result PornhubSingleVideo
+	var result SingleVideo
 	err := json.Unmarshal(b, &result)
 	if err != nil {
 		log.Println(err)
@@ -44,14 +82,15 @@ func GetVideoByID(ID string) PornhubSingleVideo {
 
 }
 
-func GetVideoEmbedCode(ID string) PornhubEmbedCode {
+// GetVideoEmbedCode function
+func GetVideoEmbedCode(ID string) EmbedCode {
 	timeout := time.Duration(APITimeout * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
 	resp, _ := client.Get(fmt.Sprintf(apiURL+"video_embed_code?id=%s", ID))
 	b, _ := ioutil.ReadAll(resp.Body)
-	var result PornhubEmbedCode
+	var result EmbedCode
 	err := json.Unmarshal(b, &result)
 	if err != nil {
 		log.Println(err)

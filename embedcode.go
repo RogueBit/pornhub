@@ -1,9 +1,11 @@
 package pornhub
 
-type PornhubEmbedCode struct {
-	Embed PornhubCode `json:"embed,omitempty"`
+// EmbedCode structure
+type EmbedCode struct {
+	Embed Code `json:"embed,omitempty"`
 }
 
-type PornhubCode struct {
+// Code structure
+type Code struct {
 	Code string `json:"code,omitempty"`
 }

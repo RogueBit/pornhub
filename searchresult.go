@@ -1,5 +1,6 @@
 package pornhub
 
-type PornhubSearchResult struct {
-	Videos []PornhubVideo `json:"videos,omitempty"`
+// SearchResult structure
+type SearchResult struct {
+	Videos []Video `json:"videos,omitempty"`
 }
