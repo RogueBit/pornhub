@@ -14,7 +14,7 @@ import (
 const apiURL = "http://www.pornhub.com/webmasters/"
 
 // APITimeout in seconds
-const APITimeout = 5
+const APITimeout = 10
 
 // SearchVideosByTerm function
 func SearchVideosByTerm(search string, page int) SearchResult {
@@ -59,6 +59,22 @@ func ListCategories() CategoriesList {
 	resp, _ := client.Get(fmt.Sprintf(apiURL + "categories"))
 	b, _ := ioutil.ReadAll(resp.Body)
 	var result CategoriesList
+	err := json.Unmarshal(b, &result)
+	if err != nil {
+		log.Println(err)
+	}
+	return result
+}
+
+// ListStars function
+func ListStars() StarsList {
+	timeout := time.Duration(APITimeout * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, _ := client.Get(fmt.Sprintf(apiURL + "stars"))
+	b, _ := ioutil.ReadAll(resp.Body)
+	var result StarsList
 	err := json.Unmarshal(b, &result)
 	if err != nil {
 		log.Println(err)
